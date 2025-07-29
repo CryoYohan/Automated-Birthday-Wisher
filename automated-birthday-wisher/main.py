@@ -60,31 +60,25 @@ def get_birthdays():
         birthdays_data = df.to_dict(orient="records")
         return birthdays_data
 
-def letter_template():
-    """
-        Pick random letter template
-    """
-    random_template = f"letter_{randint(1,7)}.txt"
-    return random_template
-
 def wish_happy_birthday():
     """
         Greet close friends and love ones HAPPY BIRTHDAY
     """
     birthdays = get_birthdays()
+    letter_template = f"letter_templates/letter_{randint(1, 7)}.txt"
     count = 0
     for birthday in birthdays:
         birthdate = datetime(year=birthday["year"], month=birthday["month"], day=birthday["day"])
         if birthdate.month == now.month and birthdate.day == now.day:
             try:
-                with open(f"letter_templates/{letter_template()}", "r") as letter:
+                with open(letter_template, "r") as letter:
                     message = letter.read()
                     message = message.replace("[NAME]", f"{birthday["name"]}")
                     print(f"Birthday Message:\nTo: {birthday["email"]}\n{message}")
                     send_email(message=message, receiver_email=birthday["email"], subject="Happy Birthday Wish")
                     count += 1
             except FileNotFoundError:
-                print(f"File '{letter_template()}' does not exist!")
+                print(f"File '{letter_template}' does not exist!")
     print(f"There are {count} birthday(s) for this day: {now.date()}")
 
 def share_motivational_quote():
@@ -92,7 +86,7 @@ def share_motivational_quote():
         Send motivational quotes on Mondays
     """
     day_of_week = now.weekday()
-    monday = 2
+    monday = 0
     if day_of_week == monday:
         data = pd.read_csv("birthdays.csv")
         friends = data.to_dict(orient="records")
