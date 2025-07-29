@@ -39,7 +39,6 @@ def motivational_quote():
     else:
         return message
 
-
 now = dt.datetime.now()
 day_today = now.weekday()
 if day_today == 2:
