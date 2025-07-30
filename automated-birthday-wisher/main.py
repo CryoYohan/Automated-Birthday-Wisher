@@ -81,7 +81,7 @@ def share_motivational_quote():
     """
         Send motivational quotes on Mondays
     """
-    monday = 2  # Monday is 0 in Python datetime
+    monday = 0 # Monday is 0 in Python datetime
     if day_today == monday:
         print("Today is Monday!")
         friends = get_birthdays()
