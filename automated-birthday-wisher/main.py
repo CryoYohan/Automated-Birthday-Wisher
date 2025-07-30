@@ -13,7 +13,7 @@ now = dt.datetime.now(timezone(timedelta(hours=8)))
 day_today = now.weekday()
 
 sender_email = os.environ.get("GMAIL_USER")
-app_password = os.environ.get("GMAIL_APP_PASSWORD")
+app_password = os.environ.get("GMAIL_PASSWORD")
 
 def send_email(message, receiver_email, subject):
     """
