@@ -65,7 +65,8 @@ def wish_happy_birthday():
     birthdays = get_birthdays()
     count = 0
     for birthday in birthdays:
-        if birthday["month"] == now.month and birthday["day"] == now.day:
+        if int(birthday["month"]) == now.month and int(birthday["day"]) == now.day:
+            print(f"Checking: {birthday['name']} - {birthday['month']}/{birthday['day']} vs Today: {now.month}/{now.day}")
             letter_template_path = os.path.join(BASE_DIR, "letter_templates", f"letter_{randint(1, 7)}.txt")
             try:
                 with open(letter_template_path, "r") as letter:
