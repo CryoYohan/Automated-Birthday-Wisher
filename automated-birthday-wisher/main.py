@@ -2,11 +2,12 @@ import smtplib
 from datetime import datetime
 from email.mime.text import MIMEText
 import datetime as dt
+from datetime import timezone, timedelta
 from random import choice, randint
 import pandas as pd
 import os
 
-now = dt.datetime.now()
+now = dt.datetime.now(timezone(timedelta(hours=8)))
 day_today = now.weekday()
 
 # sender_email = "yohancryo@gmail.com"
