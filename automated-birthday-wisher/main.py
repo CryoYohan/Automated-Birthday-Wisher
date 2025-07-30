@@ -9,7 +9,7 @@ import os
 
 now = dt.datetime.now(timezone(timedelta(hours=8)))
 day_today = now.weekday()
-
+ 
 # sender_email = "yohancryo@gmail.com"
 # app_password = "lrpwwyshklkhsqbu"
 
