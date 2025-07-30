@@ -1,20 +1,19 @@
 import smtplib
 from datetime import datetime
 from email.mime.text import MIMEText
-from dotenv import load_dotenv
-import os
 import datetime as dt
 from random import choice, randint
 import pandas as pd
-
-load_dotenv()
+import os
 
 now = dt.datetime.now()
 day_today = now.weekday()
 
-sender_email = os.getenv("sender_email")
-#receiver_email = os.getenv("receiver_email")
-app_password = os.getenv("PASSWORD")
+# sender_email = "yohancryo@gmail.com"
+# app_password = "lrpwwyshklkhsqbu"
+
+sender_email = os.environ.get("GMAIL_USER")
+app_password = os.environ.get("GMAIL_APP_PASSWORD")
 
 def send_email(message, receiver_email, subject):
     """
@@ -22,7 +21,7 @@ def send_email(message, receiver_email, subject):
     """
     msg = MIMEText(f"{message}")
     msg["Subject"] = subject
-    msg["From"] = "Cyril John Ypil"
+    msg["From"] = sender_email
     msg["To"] = receiver_email
     try:
         with smtplib.SMTP("smtp.gmail.com", 587) as server:
@@ -30,7 +29,7 @@ def send_email(message, receiver_email, subject):
             server.starttls()
             server.login(sender_email, app_password)
             server.sendmail(sender_email, receiver_email, msg.as_string())
-        print("Email sent successfully.")
+        print(f"Email sent to {receiver_email}")
     except Exception as e:
         print("Error:", e)
 
@@ -40,13 +39,12 @@ def get_motivational_quote():
     """
     try:
         with open("quotes.txt", "r") as file:
-            quotes = file.read()
-            quotes = quotes.split("\n")
+            quotes = file.read().splitlines()
             message = choice(quotes)
     except FileNotFoundError:
         print("File does not exist!")
-    else:
-        return message
+        message = "Stay motivated!"
+    return message
 
 def get_birthdays():
     """
@@ -56,9 +54,8 @@ def get_birthdays():
         df = pd.read_csv("birthdays.csv")
     except FileNotFoundError:
         print("The 'birthdays.csv' file is missing!")
-    else:
-        birthdays_data = df.to_dict(orient="records")
-        return birthdays_data
+        return []
+    return df.to_dict(orient="records")
 
 def wish_happy_birthday():
     """
@@ -68,34 +65,32 @@ def wish_happy_birthday():
     letter_template = f"letter_templates/letter_{randint(1, 7)}.txt"
     count = 0
     for birthday in birthdays:
-        birthdate = datetime(year=birthday["year"], month=birthday["month"], day=birthday["day"])
-        if birthdate.month == now.month and birthdate.day == now.day:
+        if birthday["month"] == now.month and birthday["day"] == now.day:
             try:
                 with open(letter_template, "r") as letter:
-                    message = letter.read()
-                    message = message.replace("[NAME]", f"{birthday["name"]}")
-                    print(f"Birthday Message:\nTo: {birthday["email"]}\n{message}")
+                    message = letter.read().replace("[NAME]", birthday["name"])
+                    print(f"Sending Birthday Message to: {birthday['email']}\n{message}")
                     send_email(message=message, receiver_email=birthday["email"], subject="Happy Birthday Wish")
                     count += 1
             except FileNotFoundError:
                 print(f"File '{letter_template}' does not exist!")
-    print(f"There are {count} birthday(s) for this day: {now.date()}")
+    print(f"There are {count} birthday(s) for today: {now.date()}")
 
 def share_motivational_quote():
     """
         Send motivational quotes on Mondays
     """
-    day_of_week = now.weekday()
-    monday = 0
-    if day_of_week == monday:
-        data = pd.read_csv("birthdays.csv")
-        friends = data.to_dict(orient="records")
-
+    monday = 0  # Monday is 0 in Python datetime
+    if day_today == monday:
+        print("Today is Monday!")
+        friends = get_birthdays()
         for friend in friends:
             message = get_motivational_quote()
             subject = "Monday Motivational Quote"
             email = friend["email"]
             send_email(message=message, receiver_email=email, subject=subject)
+    else:
+        print("It's not Monday.")
 
 if __name__ == "__main__":
     share_motivational_quote()
