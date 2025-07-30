@@ -2,7 +2,7 @@ name: Gmail Email Automation
 
 on:
   schedule:
-    - cron: '0 1 * * *'  # every day at 1 AM UTC
+    - cron: '0 17 * * *'  # runs daily at 1:00 AM UTC+8
   workflow_dispatch:  # manual trigger
 
 jobs:
