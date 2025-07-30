@@ -1,5 +1,4 @@
 import smtplib
-from datetime import datetime
 from email.mime.text import MIMEText
 import datetime as dt
 from datetime import timezone, timedelta
