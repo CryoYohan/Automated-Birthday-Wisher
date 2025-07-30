@@ -7,11 +7,10 @@ from random import choice, randint
 import pandas as pd
 import os
 
+# Get the base directory where the script is located
+BASE_DIR = os.path.dirname(__file__)
 now = dt.datetime.now(timezone(timedelta(hours=8)))
 day_today = now.weekday()
-
-# sender_email = "yohancryo@gmail.com"
-# app_password = "lrpwwyshklkhsqbu"
 
 sender_email = os.environ.get("GMAIL_USER")
 app_password = os.environ.get("GMAIL_APP_PASSWORD")
@@ -38,8 +37,9 @@ def get_motivational_quote():
     """
         Pick random motivational quote
     """
+    quotes_path = os.path.join(BASE_DIR, "quotes.txt")
     try:
-        with open("quotes.txt", "r") as file:
+        with open(quotes_path, "r") as file:
             quotes = file.read().splitlines()
             message = choice(quotes)
     except FileNotFoundError:
@@ -51,8 +51,9 @@ def get_birthdays():
     """
         Get close friends birthday data
     """
+    birthdays_path = os.path.join(BASE_DIR, "birthdays.csv")
     try:
-        df = pd.read_csv("birthdays.csv")
+        df = pd.read_csv(birthdays_path)
     except FileNotFoundError:
         print("The 'birthdays.csv' file is missing!")
         return []
@@ -60,21 +61,21 @@ def get_birthdays():
 
 def wish_happy_birthday():
     """
-        Greet close friends and love ones HAPPY BIRTHDAY
+        Greet close friends and loved ones HAPPY BIRTHDAY
     """
     birthdays = get_birthdays()
-    letter_template = f"letter_templates/letter_{randint(1, 7)}.txt"
     count = 0
     for birthday in birthdays:
         if birthday["month"] == now.month and birthday["day"] == now.day:
+            letter_template_path = os.path.join(BASE_DIR, "letter_templates", f"letter_{randint(1, 7)}.txt")
             try:
-                with open(letter_template, "r") as letter:
+                with open(letter_template_path, "r") as letter:
                     message = letter.read().replace("[NAME]", birthday["name"])
                     print(f"Sending Birthday Message to: {birthday['email']}\n{message}")
                     send_email(message=message, receiver_email=birthday["email"], subject="Happy Birthday Wish")
                     count += 1
             except FileNotFoundError:
-                print(f"File '{letter_template}' does not exist!")
+                print(f"File '{letter_template_path}' does not exist!")
     print(f"There are {count} birthday(s) for today: {now.date()}")
 
 def share_motivational_quote():
